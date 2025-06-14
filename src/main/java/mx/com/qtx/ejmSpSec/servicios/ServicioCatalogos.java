@@ -4,11 +4,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import mx.com.qtx.ejmSpSec.defServicios.IServicioCatalogos;
 
 @Service
+@Primary
 public class ServicioCatalogos implements IServicioCatalogos{
 	@Autowired
 	IGestorDatos gestorDatos;

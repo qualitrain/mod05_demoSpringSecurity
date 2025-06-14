@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import mx.com.qtx.ejmSpSec.defServicios.IServicioCatalogos;
 
 @Service
-@Primary
+//@Primary
 public class ServicioCatalogosErroneo implements IServicioCatalogos {
 
 	private static Logger bitacora = LoggerFactory.getLogger(ServicioCatalogosErroneo.class);	
