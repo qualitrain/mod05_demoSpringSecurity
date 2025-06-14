@@ -30,16 +30,30 @@ public class CatalogosRest {
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public List<String> getApellidos() {
-		
+		bitacora.trace("getApellidos()");
 		bitacora.info("getApellidos()");
 		List<String> apellidos = this.servicioCatalogos.getApellidosSugeridos("");
 		if(apellidos == null) {
+			String nomClaseEnFallo = this.servicioCatalogos.getClass().getName();
+			reportarErrorEnBitacora(nomClaseEnFallo, "getApellidos()", "getApellidosSugeridos(\"\")", "devolvió null");
 			throw getError("Falló el sistema subyacente", 
 					        ErrorRest.ERR_FALLA_SERVICIO, 
 					        Response.Status.BAD_REQUEST);
 		}
 		return apellidos;
 		
+	}
+	private void reportarErrorEnBitacora(String nomClaseEnFallo, String metodoCtrlr, String metodoDelegado,
+			String falla) {
+		bitacora.error("Fallo en [" + nomClaseEnFallo + "]." 
+				+ "Método en controlador:"
+				+ metodoCtrlr
+				+ ". "
+				+ "el  método delegado "
+				+ metodoDelegado 
+				+ " "
+				+ falla
+				+ " ");
 	}
 	
 	@Path("apellidos/{inicio}")
@@ -49,9 +63,13 @@ public class CatalogosRest {
 			@PathParam("inicio")
 			String inicio) {
 		
-		bitacora.info("getApellidosQueInicienCon(" + inicio + ")");
+		bitacora.debug("getApellidosQueInicienCon(" + inicio + ")");
 		List<String> apellidos = this.servicioCatalogos.getApellidosSugeridos(inicio);
 		if(apellidos == null) {
+			String nomClaseEnFallo = this.servicioCatalogos.getClass().getName();
+			reportarErrorEnBitacora(nomClaseEnFallo, "getApellidosQueInicienCon(" + inicio
+					+ ")", "getApellidosSugeridos(" + inicio
+							+ ")", "devolvió null");
 			throw getError("Falló el sistema subyacente", 
 					        ErrorRest.ERR_FALLA_SERVICIO, 
 					        Response.Status.BAD_REQUEST);
@@ -68,6 +86,10 @@ public class CatalogosRest {
 		bitacora.info("getNombresQueInicienCon(" + inicio + ")");
 		List<String> nombres = this.servicioCatalogos.getNombresSugeridos(inicio);
 		if(nombres == null) {
+			String nomClaseEnFallo = this.servicioCatalogos.getClass().getName();
+			reportarErrorEnBitacora(nomClaseEnFallo, "getNombresQueInicienCon(" + inicio
+					+ ")", "getNombresSugeridos(" + inicio
+							+ ")", "devolvió null");
 			throw getError("Falló el sistema subyacente", 
 					        ErrorRest.ERR_FALLA_SERVICIO, 
 					        Response.Status.BAD_REQUEST);
@@ -78,9 +100,11 @@ public class CatalogosRest {
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public List<String> getNombres(){
-		bitacora.info("getNombres()");
+		bitacora.trace("getNombres()");
 		List<String> nombres = this.servicioCatalogos.getNombresSugeridos("");
 		if(nombres == null) {
+			String nomClaseEnFallo = this.servicioCatalogos.getClass().getName();
+			reportarErrorEnBitacora(nomClaseEnFallo, "getNombresQueInicienCon(\"\")", "getNombresSugeridos(\"\")", "devolvió null");
 			throw getError("Falló el sistema subyacente", 
 					        ErrorRest.ERR_FALLA_SERVICIO, 
 					        Response.Status.BAD_REQUEST);
