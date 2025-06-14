@@ -12,7 +12,7 @@ public class RaizCtrlr {
 	private static Logger bitacora = LoggerFactory.getLogger(RaizCtrlr.class);
 	
 	public RaizCtrlr() {
-		bitacora.warn("instancia creada:RaizCtrlr()");
+		bitacora.debug("instancia creada:RaizCtrlr()");
 	}
 	
 	@GetMapping("/comenzar")
