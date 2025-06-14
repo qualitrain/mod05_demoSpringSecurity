@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página no encontrada - Error 404</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        .error-container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .error-code {
+            font-size: 8rem;
+            font-weight: 800;
+            line-height: 1;
+            color: #dc3545;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        
+        .error-title {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #212529;
+        }
+        
+        .error-message {
+            font-size: 1.1rem;
+            color: #6c757d;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+        
+        .error-icon {
+            font-size: 5rem;
+            color: #dc3545;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out 0.3s forwards;
+        }
+        
+        .btn-home {
+            padding: 0.8rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-home:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .btn-home:hover:before {
+            transform: translateX(0);
+        }
+        
+        .suggestions {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+        }
+        
+        .suggestions-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #6c757d;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .suggestions-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+        
+        .suggestions-list li a {
+            display: block;
+            padding: 0.5rem 1.2rem;
+            background-color: #f1f3f5;
+            border-radius: 50px;
+            color: #495057;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        
+        .suggestions-list li a:hover {
+            background-color: #e9ecef;
+            color: #212529;
+            transform: translateY(-2px);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .error-code {
+                font-size: 6rem;
+            }
+            
+            .error-title {
+                font-size: 1.8rem;
+            }
+            
+            .error-icon {
+                font-size: 4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-icon">
+            <i class="bi bi-exclamation-octagon"></i>
+        </div>
+        
+        <div class="error-code">404</div>
+        
+        <h1 class="error-title">Página no encontrada</h1>
+        
+        <p class="error-message">
+            Lo sentimos, la página que estás buscando no existe o ha sido movida.
+            Por favor, verifica la URL o navega a través de nuestro sitio.
+        </p>
+        
+        <a href="/" class="btn btn-home btn-danger">
+            <i class="bi bi-house-door me-2"></i> Volver al inicio
+        </a>
+        
+        <div class="suggestions">
+            <div class="suggestions-title">Páginas populares</div>
+            <ul class="suggestions-list">
+                <li><a href="/"><i class="bi bi-house me-1"></i> Inicio</a></li>
+                <li><a href="#"><i class="bi bi-info-circle me-1"></i> Acerca de</a></li>
+                <li><a href="#"><i class="bi bi-briefcase me-1"></i> Servicios</a></li>
+                <li><a href="#"><i class="bi bi-people me-1"></i> Equipo</a></li>
+                <li><a href="#"><i class="bi bi-envelope me-1"></i> Contacto</a></li>
+                <li><a href="#"><i class="bi bi-question-circle me-1"></i> Soporte</a></li>
+            </ul>
+        </div>
+        
+        <div class="mt-4 text-muted small">
+            <p>© 2023 MiAplicación.com • Código de error: 404_NOT_FOUND</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Añadir efecto al botón
+            const btnHome = document.querySelector('.btn-home');
+            
+            btnHome.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px)';
+                this.style.boxShadow = '0 7px 14px rgba(220, 53, 69, 0.2)';
+            });
+            
+            btnHome.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = 'none';
+            });
+            
+            // Simular redirección al hacer clic
+            btnHome.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Animación de clic
+                this.animate([
+                    { transform: 'scale(0.95)', backgroundColor: '#dc3545' },
+                    { transform: 'scale(1)', backgroundColor: '#dc3545' }
+                ], {
+                    duration: 300,
+                    easing: 'ease-out'
+                });
+                
+                // Simular redirección después de un breve retraso
+                setTimeout(() => {
+                    window.location.href = "/"; // En producción sería la URL de inicio
+                }, 500);
+            });
+        });
+    </script>
+</body>
+</html>
