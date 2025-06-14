@@ -9,5 +9,6 @@ public class ConfiguracionJersey extends ResourceConfig {
 		this.register(CatalogosRest.class);
 		this.register(PersonasRest.class);
 		this.register(CorsFilter.class);
+		this.register(GenericExceptionMapper.class);
 	}
 }
