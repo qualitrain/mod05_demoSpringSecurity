@@ -12,11 +12,14 @@ public class RaizCtrlr {
 	private static Logger bitacora = LoggerFactory.getLogger(RaizCtrlr.class);
 	
 	public RaizCtrlr() {
-		bitacora.info("instancia creada:RaizCtrlr()");
+		bitacora.warn("instancia creada:RaizCtrlr()");
 	}
 	
 	@GetMapping("/comenzar")
 	public String getWelcomeFile(Model modelo) {
+		bitacora.trace("getWelcomeFile()");
+		
+		bitacora.debug("modelo contiene " +  modelo.asMap().size() + " propiedades");
 		return "raizHtml";
 	}
 	
