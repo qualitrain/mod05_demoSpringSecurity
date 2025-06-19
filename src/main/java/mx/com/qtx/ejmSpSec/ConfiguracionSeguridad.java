@@ -17,7 +17,14 @@ import org.springframework.security.web.SecurityFilterChain;
 public class ConfiguracionSeguridad {
 	@Bean
 	SecurityFilterChain crearSecurityFilterChain(HttpSecurity http) throws Exception {
-		return http.authorizeHttpRequests(autorizador->autorizador.anyRequest().authenticated())
+		return http.authorizeHttpRequests(autorizador->autorizador
+				           .requestMatchers("/css/**").permitAll()
+				           .requestMatchers("/info","/vistaInfo.html").permitAll()
+				           .requestMatchers("/api/**").hasRole("VTAS")
+				           .requestMatchers("/admin/**").hasRole("ADMIN")
+				           .requestMatchers("logistica/**").hasAnyRole("DESARROLLO","COMPRAS")
+				           .requestMatchers("/**").authenticated()
+				)
 		     .httpBasic(Customizer.withDefaults())
 		     .formLogin(Customizer.withDefaults())
 		     .build();
