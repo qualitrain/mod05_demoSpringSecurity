@@ -11,7 +11,7 @@ import mx.com.qtx.ejmSpSec.entidades.CatValorSimple;
 import mx.com.qtx.ejmSpSec.entidades.Persona;
 import mx.com.qtx.ejmSpSec.servicios.IGestorDatos;
 
-@Primary
+//@Primary
 @Repository
 public class GestorDatosErroneo implements IGestorDatos{
 	private static Logger bitacora = LoggerFactory.getLogger(GestorDatosErroneo.class);	

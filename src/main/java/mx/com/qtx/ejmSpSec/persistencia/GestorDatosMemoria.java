@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import mx.com.qtx.ejmSpSec.entidades.CatValorSimple;
@@ -13,6 +14,7 @@ import mx.com.qtx.ejmSpSec.entidades.Persona;
 import mx.com.qtx.ejmSpSec.servicios.IGestorDatos;
 import mx.com.qtx.ejmSpSec.util.Util;
 
+@Primary
 @Repository
 public class GestorDatosMemoria implements IGestorDatos {
 	private static String[] nombres = {"Pedro","Juan", "Jaime", "Marcelo", "Marcela", "Graciela",
