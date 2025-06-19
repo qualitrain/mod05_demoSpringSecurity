@@ -20,7 +20,21 @@ public class RaizCtrlr {
 		bitacora.trace("getWelcomeFile()");
 		
 		bitacora.debug("modelo contiene " +  modelo.asMap().size() + " propiedades");
-		return "raizHtml";
+		return "vistaRaiz";
+	}
+	@GetMapping("/admin")
+	public String getVistaAdmin(Model modelo) {
+		return "vistaAdmin";
+	}
+	
+	@GetMapping("/logistica")
+	public String getVistaLogistica(Model modelo) {
+		return "vistaLogistica";
+	}
+	
+	@GetMapping("/info")
+	public String getVistaInfo(Model modelo) {
+		return "vistaInfo";
 	}
 	
 }
