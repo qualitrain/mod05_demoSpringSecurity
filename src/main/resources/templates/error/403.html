@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Prohibido - Error 403</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        .error-container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        .error-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            padding: 3rem 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .error-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #ffc107, #fd7e14);
+        }
+        
+        .error-icon {
+            font-size: 4.5rem;
+            color: #ffc107;
+            margin-bottom: 1.8rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .error-code {
+            font-size: 5.5rem;
+            font-weight: 800;
+            line-height: 1;
+            color: #212529;
+            margin-bottom: 1.5rem;
+        }
+        
+        .error-title {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #212529;
+        }
+        
+        .error-message {
+            font-size: 1.15rem;
+            color: #6c757d;
+            margin-bottom: 2.5rem;
+            line-height: 1.7;
+        }
+        
+        .btn-access {
+            padding: 0.85rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            border: none;
+            background: #ffc107;
+            color: #212529;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-access:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #fd7e14, #ffc107);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .btn-access:hover:before {
+            opacity: 1;
+        }
+        
+        .btn-access:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(255, 193, 7, 0.25);
+            color: #212529;
+        }
+        
+        .permission-info {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2.5rem;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+        
+        .permission-info-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .footer {
+            margin-top: 2.5rem;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .suggestions {
+            margin-top: 1.5rem;
+        }
+        
+        .suggestions-title {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: #6c757d;
+        }
+        
+        .suggestions-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+        
+        .suggestions-list li a {
+            display: block;
+            padding: 0.5rem 1.2rem;
+            background-color: #f1f3f5;
+            border-radius: 50px;
+            color: #495057;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        
+        .suggestions-list li a:hover {
+            background-color: #e9ecef;
+            color: #212529;
+            transform: translateY(-2px);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 768px) {
+            .error-container {
+                padding: 1.5rem;
+            }
+            
+            .error-card {
+                padding: 2.5rem 1.5rem;
+            }
+            
+            .error-code {
+                font-size: 4.5rem;
+            }
+            
+            .error-title {
+                font-size: 1.8rem;
+            }
+            
+            .error-icon {
+                font-size: 3.5rem;
+            }
+            
+            .btn-access {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-card">
+            <div class="error-icon">
+                <i class="bi bi-lock-fill"></i>
+            </div>
+            
+            <div class="error-code">403</div>
+            
+            <h1 class="error-title">Acceso Prohibido</h1>
+            
+            <p class="error-message">
+                No tienes permiso para acceder a este recurso. Si crees que esto es un error, 
+                por favor contacta al administrador del sistema o verifica tus credenciales.
+            </p>
+            
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="/" class="btn btn-outline-secondary">
+                    <i class="bi bi-house-door"></i> Volver al inicio
+                </a>
+                <a href="#" class="btn btn-outline-secondary">
+                    <i class="bi bi-envelope"></i> Contactar soporte
+                </a>
+            </div>
+            
+            <div class="suggestions">
+                <div class="suggestions-title">Quizás quisiste acceder a:</div>
+                <ul class="suggestions-list">
+                    <li><a href="/"><i class="bi bi-house me-1"></i> Inicio</a></li>
+                    <li><a href="#"><i class="bi bi-file-earmark-text me-1"></i> Documentación</a></li>
+                    <li><a href="#"><i class="bi bi-question-circle me-1"></i> Ayuda</a></li>
+                    <li><a href="#"><i class="bi bi-people me-1"></i> Acerca de</a></li>
+                </ul>
+            </div>
+            
+            <div class="permission-info">
+                <div class="permission-info-title">
+                    <i class="bi bi-shield-lock"></i> Información de acceso
+                </div>
+                <p class="mb-0">
+                    Código de error: 403 Forbidden<br>
+                    Recurso solicitado: /secure/admin-panel<br>
+                    Fecha y hora: <span id="timestamp"></span>
+                </p>
+            </div>
+            
+            <div class="footer">
+                <p class="mb-0">© 2023 MiAplicación.com • <a href="#" class="text-decoration-none">Políticas de acceso</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Establecer timestamp actual
+            const now = new Date();
+            const timestampElement = document.getElementById('timestamp');
+            timestampElement.textContent = now.toLocaleString();
+            
+            
+            // Efectos para botones secundarios
+            const secondaryBtns = document.querySelectorAll('.btn-outline-secondary');
+            secondaryBtns.forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-3px)';
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
