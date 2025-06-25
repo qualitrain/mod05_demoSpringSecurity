@@ -1,5 +1,7 @@
 package mx.com.qtx.ejmSpSec;
 
+import javax.sql.DataSource;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -10,6 +12,8 @@ import org.springframework.security.core.userdetails.User.UserBuilder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -30,7 +34,7 @@ public class ConfiguracionSeguridad {
 		     .build();
 	}
 	
-	@Bean
+	//@Bean
 	UserDetailsService crearGestorDeUsuarios() {
 		 UserDetails usuarioAlex = User.withDefaultPasswordEncoder()
 		     .username("Alex")
@@ -55,5 +59,37 @@ public class ConfiguracionSeguridad {
 				                                                                   usuarioAlex);
 		return gestorUsuarios;
 	}
+	
+    @Bean
+    UserDetailsManager getGestorBdUsuarios(DataSource dataSource) {
+        UserDetails usuarioAlex = User.withDefaultPasswordEncoder()
+                .username("betote")
+                .password("tlakoneteasesino")
+                .roles("USER","AGENTE","ADMIN")
+                .build();
+        
+        UserDetails usuarioDavid = User.withDefaultPasswordEncoder()
+                        .username("david")
+                        .password("tekolutla")
+                        .roles("AGENTE")
+                        .build();
+        
+        UserDetails usuarioTavo = User.withDefaultPasswordEncoder()
+                        .username("tavo")
+                        .password("tlatelolko")
+                        .roles("LOGISTICA")
+                        .build();
+        
+        JdbcUserDetailsManager gestorUsuariosBD = new JdbcUserDetailsManager(dataSource);
+               
+        if(gestorUsuariosBD.userExists(usuarioAlex.getUsername()) == false)
+            gestorUsuariosBD.createUser(usuarioAlex);
+        if(gestorUsuariosBD.userExists(usuarioDavid.getUsername()) == false)
+           gestorUsuariosBD.createUser(usuarioDavid);
+        if(gestorUsuariosBD.userExists(usuarioTavo.getUsername()) == false)
+           gestorUsuariosBD.createUser(usuarioTavo);
+        
+        return gestorUsuariosBD;
+   }
 	
 }
