@@ -62,21 +62,18 @@ public class ConfiguracionSeguridad {
 	
     @Bean
     UserDetailsManager getGestorBdUsuarios(DataSource dataSource) {
-        UserDetails usuarioAlex = User.withDefaultPasswordEncoder()
-                .username("betote")
-                .password("tlakoneteasesino")
+        UserDetails usuarioAlex = User.withUsername("betote")
+                 .password("{bcrypt}$2a$10$rz1ehHUZCmkf2zdQ0cZQsefzyOJmHb2NeD2gPmeQjMZPqXcjEYLEe")
                 .roles("USER","AGENTE","ADMIN")
                 .build();
         
-        UserDetails usuarioDavid = User.withDefaultPasswordEncoder()
-                        .username("david")
-                        .password("tekolutla")
+        UserDetails usuarioDavid = User.withUsername("david")
+                        .password("{bcrypt}$2a$10$MT.E/Kh/p.lRm6PjCD0FceHGSL0SAx.F.9uvr66bzErLdl6uXct22")
                         .roles("AGENTE")
                         .build();
         
-        UserDetails usuarioTavo = User.withDefaultPasswordEncoder()
-                        .username("tavo")
-                        .password("tlatelolko")
+        UserDetails usuarioTavo = User.withUsername("tavo")
+                        .password("{bcrypt}$2a$10$0s8uv8VHRc0L5qR5EwNpj.OipjeE4bYsSD3Mvrzh3sG2nMCgoK7re")
                         .roles("LOGISTICA")
                         .build();
         
