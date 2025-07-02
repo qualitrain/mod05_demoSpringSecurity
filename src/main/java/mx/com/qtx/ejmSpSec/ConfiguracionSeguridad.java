@@ -6,7 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -32,9 +34,10 @@ public class ConfiguracionSeguridad {
 				           .requestMatchers("/info","/vistaInfo.html").permitAll()
 				           .requestMatchers("/api/**").hasRole("VTAS")
 				           .requestMatchers("/admin/**").hasRole("ADMIN")
-				           .requestMatchers("logistica/**").hasAnyRole("DESARROLLO","COMPRAS")
+				           .requestMatchers("/logistica/**").hasAnyRole("DESARROLLO","COMPRAS")
 				           .requestMatchers("/**").authenticated()
 				)
+				.csrf(config -> config.ignoringRequestMatchers("/api/**"))
 		     .httpBasic(Customizer.withDefaults())
 		     .formLogin(Customizer.withDefaults())
 		     .build();
@@ -118,4 +121,13 @@ public class ConfiguracionSeguridad {
                
                return gestorBdUsuariosPersonalizada;
    }	
+    @Bean
+    AuthenticationManager publicarAuthenticationManagerDesdeConfiguracion(
+        AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    	bitacora.trace("publicarAuthenticationManagerDesdeConfiguracion()");
+    	AuthenticationManager authenticationManager = authenticationConfiguration.getAuthenticationManager();
+    	bitacora.debug("authenticationManager instanciado:" + authenticationManager.getClass().getName());
+        return authenticationManager;
+    }   
+    
 }
