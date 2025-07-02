@@ -30,6 +30,7 @@ public class ConfiguracionSeguridad {
 	@Bean
 	SecurityFilterChain crearSecurityFilterChain(HttpSecurity http) throws Exception {
 		return http.authorizeHttpRequests(autorizador->autorizador
+				           .requestMatchers("/api/autenticacion").permitAll()
 				           .requestMatchers("/css/**").permitAll()
 				           .requestMatchers("/info","/vistaInfo.html").permitAll()
 				           .requestMatchers("/api/**").hasRole("VTAS")
