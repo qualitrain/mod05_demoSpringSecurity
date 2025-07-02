@@ -9,6 +9,10 @@ import java.util.function.Function;
 
 import javax.crypto.SecretKey;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
@@ -19,13 +23,18 @@ import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Encoders;
 import mx.com.qtx.ejmSpSec.seguridad.servicios.IGeneradorTokensJWT;
+import mx.com.qtx.ejmSpSec.seguridad.servicios.ServicioAutenticacionSS;
 
+@Component
 public class GeneradorTokensJWT_JJWT0_12_6_SHA512 implements IGeneradorTokensJWT{
+	private static Logger bitacora = LoggerFactory.getLogger(GeneradorTokensJWT_JJWT0_12_6_SHA512.class);
+	
 	private SecretKey llave;
 	private long duracionTokens;
 	
 	public GeneradorTokensJWT_JJWT0_12_6_SHA512() {
 		super();
+		bitacora.info(this.getClass().getName() + " instanciado..");
 		this.llave = generarLlave(AlgoritmoCifradoLlaveSimetrico.HmacSHA512);
 		// 10 horas por defecto
 		this.duracionTokens = 1000 * 60 * 60 * 10;
