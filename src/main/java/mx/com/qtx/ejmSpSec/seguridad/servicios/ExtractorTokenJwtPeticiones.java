@@ -25,20 +25,29 @@ public class ExtractorTokenJwtPeticiones implements IExtractorTokenJwtPeticionHt
 	                   + request.getMethod() + " " + request.getRequestURI() + ")");
 		String authorizationHeader = request.getHeader("Authorization");
 		bitacora.debug("Authorization:" + authorizationHeader);
-		if(authorizationHeader == null)
+		if(authorizationHeader == null) {
+			bitacora.warn("authorizationHeader es nulo");
 			return false;
-		if(authorizationHeader.startsWith("Bearer ") == false)
+		}
+		if(authorizationHeader.startsWith("Bearer ") == false) {
+			bitacora.warn("authorizationHeader no inicia con 'Bearer '");			
 			return false;
+		}
 
 		String tokenJWT = authorizationHeader.substring(7);
-		if(tokenJWT.isEmpty())
+		if(tokenJWT.isEmpty()) {
+			bitacora.warn("tokenJWT está vacío");
 			return false;
+		}
 		
 		try {
-			if(jwtUtil.tokenExpirado(tokenJWT))
+			if(jwtUtil.tokenExpirado(tokenJWT)) {
+				bitacora.warn("tokenJWT esta expirado");				
 				return false;
+			}
 		}
 		catch(Exception ex) {
+			bitacora.warn("tokenJWT invalido por ex [" + ex.getClass().getName() + ": " + ex.getMessage() + "]");				
 			return false;
 		}
 		return true;

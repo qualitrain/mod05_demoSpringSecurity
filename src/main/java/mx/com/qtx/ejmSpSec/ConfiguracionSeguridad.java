@@ -4,11 +4,13 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authorization.AuthorizationEventPublisher;
+import org.springframework.security.authorization.SpringAuthorizationEventPublisher;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,16 +24,17 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 import com.zaxxer.hikari.HikariDataSource;
 
 import mx.com.qtx.ejmSpSec.seguridad.web.FiltroTokensJwt_SS;
+import mx.com.qtx.ejmSpSec.seguridad.web.ManejadorAccesosDenegados;
 
 @Configuration
 @EnableWebSecurity
@@ -40,7 +43,8 @@ public class ConfiguracionSeguridad {
 
 	@Bean
 	@Order(1)	
-	SecurityFilterChain getSecurityFilterChainApiWeb(HttpSecurity http, FiltroTokensJwt_SS filtroJWT
+	SecurityFilterChain getSecurityFilterChainApiWeb(HttpSecurity http, FiltroTokensJwt_SS filtroJWT, 
+			                                         AccessDeniedHandler manejadorAccesosDenegados
 			            ) throws Exception {
 		http.securityMatchers(config -> config.requestMatchers("/api/**","/api/autenticacion"))
 			.authorizeHttpRequests((authorize) ->  authorize
@@ -51,8 +55,8 @@ public class ConfiguracionSeguridad {
 			.formLogin(config -> config.disable())
 			.logout(config -> config.disable())
 		  	.addFilterBefore(filtroJWT, UsernamePasswordAuthenticationFilter.class)
-		  	.sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
+		  	.sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+		  	.exceptionHandling(config -> config.accessDeniedHandler(manejadorAccesosDenegados));
 		return http.build();
 	}
 	
@@ -81,8 +85,11 @@ public class ConfiguracionSeguridad {
 	}
 	
 	private RequestMatcher buildRequestMatcherTodosExcepto(String urlExcluida1, String urlExcluida2) {
-		OrRequestMatcher orRequestMatcher = new OrRequestMatcher(new AntPathRequestMatcher(urlExcluida1), 
-				                                                 new AntPathRequestMatcher(urlExcluida2)); 
+	    PathPatternRequestMatcher matcher1 = PathPatternRequestMatcher.withDefaults()
+	    		                                                      .matcher(urlExcluida1);
+	    PathPatternRequestMatcher matcher2 = PathPatternRequestMatcher.withDefaults()
+	    		                                                      .matcher(urlExcluida2);
+	    OrRequestMatcher orRequestMatcher = new OrRequestMatcher(matcher1, matcher2); 
 		RequestMatcher patronUrlsXatender = new NegatedRequestMatcher(orRequestMatcher);
 		return patronUrlsXatender;
 	}
@@ -181,14 +188,26 @@ public class ConfiguracionSeguridad {
                gestorBdUsuariosPersonalizada.setAuthoritiesByUsernameQuery(QUERY_ROLES_X_USUARIO);
                
                return gestorBdUsuariosPersonalizada;
-   }	
+    }
+    
     @Bean
     AuthenticationManager publicarAuthenticationManagerDesdeConfiguracion(
         AuthenticationConfiguration authenticationConfiguration) throws Exception {
     	bitacora.trace("publicarAuthenticationManagerDesdeConfiguracion()");
     	AuthenticationManager authenticationManager = authenticationConfiguration.getAuthenticationManager();
-    	bitacora.debug("authenticationManager instanciado:" + authenticationManager.getClass().getName());
+    	bitacora.debug(" Bean authenticationManager instanciado:" + authenticationManager.getClass().getName());
         return authenticationManager;
-    }   
+    }
     
+	@Bean
+	AuthorizationEventPublisher publicadorEvtAutorizacion(ApplicationEventPublisher aep) {
+		bitacora.info(" Bean AuthorizationEventPublisher instanciado");
+		return new SpringAuthorizationEventPublisher(aep);
+	}   
+	
+	@Bean
+	AccessDeniedHandler getManejadorAccesosDenegados() {
+		bitacora.info(" Bean AccessDeniedHandler instanciado");
+		return new ManejadorAccesosDenegados();
+	}
 }

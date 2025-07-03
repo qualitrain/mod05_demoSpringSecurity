@@ -1,10 +1,13 @@
 package mx.com.qtx.ejmSpSec.seguridad.web;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +24,13 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class FiltroTokensJwt_SS extends OncePerRequestFilter {
+	
+	public static int PETICION_AUTENTICADA_OK                           =  0;
+	public static int ERROR_TOKEN_INVALIDO                              = -1;
+	public static int ERROR_NO_HAY_NOMBRE_USUARIO_EN_TOKEN              = -2;
+	public static int ERROR_YA_HAY_TOKEN_AUTENTICACION_EN_CTX_SEGURIDAD = -3;
+	
+	
     private IExtractorTokenJwtPeticionHttp servTokens;
     private UserDetailsService gestorUsuariosSS;
 	
@@ -39,9 +49,28 @@ public class FiltroTokensJwt_SS extends OncePerRequestFilter {
 		 								+ ", URI:" + request.getRequestURI()
 		 								+ ", PathInfo:" + request.getPathInfo()
 				+ ")");
-		procesarToken(request);
-		filterChain.doFilter(request, response);
+		int statusAutenticacionPeticion = autenticarPeticionConTokenJWT(request);
+		if(statusAutenticacionPeticion == PETICION_AUTENTICADA_OK) {
+			bitacora.debug("Peticion autenticada. Prosigue cadena de filtrado");
+			filterChain.doFilter(request, response);
+		}
+		else {
+			String respuestaJSon = generarRespuestaJsonDeRechazo(response, statusAutenticacionPeticion);
+			bitacora.warn("Peticion rechazada de " + request.getRemoteAddr()
+					+ ". Respuesta devuelta:" + respuestaJSon);
+		}
 	}
+
+	private String generarRespuestaJsonDeRechazo(HttpServletResponse response, int statusAutenticacionPeticion)
+			throws IOException {
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		PrintWriter writer = response.getWriter();
+		String respuesta = "{\"error\":" + statusAutenticacionPeticion + "}";
+		writer.append(respuesta);
+		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		return respuesta;
+	}
+	
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		String servletPath = request.getServletPath();
@@ -53,29 +82,35 @@ public class FiltroTokensJwt_SS extends OncePerRequestFilter {
 			
 		return false;
 	}
-	private void procesarToken(HttpServletRequest request) {
+	
+	private int autenticarPeticionConTokenJWT(HttpServletRequest request) {
 		bitacora.trace("procesarToken(" + request.getMethod() + " " + request.getRequestURI() +")");
 		
 		if (servTokens.peticionTieneTokenValido(request) == false) {
-			bitacora.warn("Peticion tiene Token Invalido");
-			return;
+			bitacora.warn("Peticion " + request.getMethod() + " " + request.getRequestURI() 
+							+ " tiene Token Invalido");
+			return ERROR_TOKEN_INVALIDO;
 		}
 		
 		String nombreUsuario = servTokens.getNombreUsuario(request);
 		bitacora.debug("nombreUsuario:" + nombreUsuario);
-		if(nombreUsuario == null)
-			return;
-		completarAutenticacionSS(nombreUsuario, request);
+		
+		if(nombreUsuario == null) {
+			bitacora.warn("Peticion " + request.getMethod() + " " + request.getRequestURI() 
+							+ " no contiene nombreUsuario");
+			return ERROR_NO_HAY_NOMBRE_USUARIO_EN_TOKEN;
+		}
+		return publicarTokenAutenticacionEnCtxSeguridad(nombreUsuario, request);
 		
 	}
 
-	private void completarAutenticacionSS(String nombreUsuario, HttpServletRequest request) {
+	private int publicarTokenAutenticacionEnCtxSeguridad(String nombreUsuario, HttpServletRequest request) {
 		
 		 SecurityContext ctxSeguridad = SecurityContextHolder.getContext();
 		 if(ctxSeguridad.getAuthentication() != null) {
 			 bitacora.info("YA HAY un principal en la petición (no debería ser así): "
 				 		+ "nombrePrincipal:" + ctxSeguridad.getAuthentication().getName());
-				 return; // Ya hay un token de Autenticación en el contexto de seguridad
+				 return ERROR_YA_HAY_TOKEN_AUTENTICACION_EN_CTX_SEGURIDAD; // Ya hay un token de Autenticación en el contexto de seguridad
 		 }
 		 
 		 WebAuthenticationDetailsSource wads = new WebAuthenticationDetailsSource();
@@ -88,8 +123,8 @@ public class FiltroTokensJwt_SS extends OncePerRequestFilter {
 		 tknAutenticacion.setDetails(webDetails); // Se agregan datos relacionados con la petición
 		 ctxSeguridad.setAuthentication(tknAutenticacion); //Se agrega token de autenticación de este usuario al contexto
 		 
-		 bitacora.info("Se ha agregado token de autenticación a peticion c/Token JWT:" + tknAutenticacion);
-		
+		 bitacora.debug("Se ha agregado token de autenticación a ctx seguridad:" + tknAutenticacion);
+		 return PETICION_AUTENTICADA_OK;
 	}
 
 

@@ -45,7 +45,7 @@ public class AutenticacionRest {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public TokenJWT registrarAutenticacion(Autenticacion aut) {
-		bitacora.info("registrarAutenticacion(" + aut + ")");
+		bitacora.info("registrarAutenticacion(" + aut.getNombreUsuario() + ")");
 		IResultadoOperacion resultado = this.servAutenticacion.registrarAutenticación(aut);
 		if(resultado.todoOk())
 			return (TokenJWT) resultado.getObjResultadoOk();
