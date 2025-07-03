@@ -4,13 +4,16 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,15 +22,72 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import com.zaxxer.hikari.HikariDataSource;
+
+import mx.com.qtx.ejmSpSec.seguridad.web.FiltroTokensJwt_SS;
 
 @Configuration
 @EnableWebSecurity
 public class ConfiguracionSeguridad {
 	private static Logger bitacora = LoggerFactory.getLogger(ConfiguracionSeguridad.class);
+
+	@Bean
+	@Order(1)	
+	SecurityFilterChain getSecurityFilterChainApiWeb(HttpSecurity http, FiltroTokensJwt_SS filtroJWT
+			            ) throws Exception {
+		http.securityMatchers(config -> config.requestMatchers("/api/**","/api/autenticacion"))
+			.authorizeHttpRequests((authorize) ->  authorize
+			     .requestMatchers("/api/autenticacion").permitAll()
+			     .requestMatchers("/api/**").hasRole("AGENTE")
+			)
+			.csrf(config -> config.disable())
+			.formLogin(config -> config.disable())
+			.logout(config -> config.disable())
+		  	.addFilterBefore(filtroJWT, UsernamePasswordAuthenticationFilter.class)
+		  	.sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+		return http.build();
+	}
 	
 	@Bean
+	@Order(2)	
+	SecurityFilterChain getSecurityFilterChainMvc(HttpSecurity http) 
+		    throws Exception {
+		
+		RequestMatcher urisXatender = this.buildRequestMatcherTodosExcepto("/api/**", "/api/autenticacion");
+		
+		http.securityMatcher(urisXatender)
+			.authorizeHttpRequests((authorize) ->  authorize
+			     .requestMatchers("/css/*","/login").permitAll()
+				 .requestMatchers("/info","/vistaInfo.html").permitAll()
+			     .requestMatchers("/admin/**").hasRole("ADMIN")
+			     .requestMatchers("/logistica/**").hasAnyRole("LOGISTICA","ADMIN")
+			     .requestMatchers("/**").authenticated()
+			)
+			.csrf(Customizer.withDefaults())
+			.httpBasic(Customizer.withDefaults())
+			.formLogin(Customizer.withDefaults())
+			.logout(config -> config.invalidateHttpSession(true))
+			.sessionManagement(config -> config.maximumSessions(1));
+
+		return http.build();
+	}
+	
+	private RequestMatcher buildRequestMatcherTodosExcepto(String urlExcluida1, String urlExcluida2) {
+		OrRequestMatcher orRequestMatcher = new OrRequestMatcher(new AntPathRequestMatcher(urlExcluida1), 
+				                                                 new AntPathRequestMatcher(urlExcluida2)); 
+		RequestMatcher patronUrlsXatender = new NegatedRequestMatcher(orRequestMatcher);
+		return patronUrlsXatender;
+	}
+	
+	//@Bean
 	SecurityFilterChain crearSecurityFilterChain(HttpSecurity http) throws Exception {
 		return http.authorizeHttpRequests(autorizador->autorizador
 				           .requestMatchers("/api/autenticacion").permitAll()
